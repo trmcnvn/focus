@@ -1,9 +1,11 @@
 const startTime = Date.now();
 const electron = require('electron');
-const dialog = require('dialog');
+
+import Application from './application';
 
 const {
-    app
+  app,
+  dialog
 } = electron;
 
 process.on('uncaughtException', (err) => {
@@ -14,6 +16,6 @@ process.on('uncaughtException', (err) => {
 });
 
 app.on('ready', () => {
-  // ...
+  global.application = new Application();
   console.log('[Startup]', Date.now() - startTime);
 });
