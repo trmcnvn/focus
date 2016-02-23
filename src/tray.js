@@ -15,7 +15,6 @@ const {
 export default class Tray extends EventEmitter {
   constructor() {
     super();
-
     this.tray = this.createTrayIcon();
     this.events();
   }
@@ -24,28 +23,39 @@ export default class Tray extends EventEmitter {
     const images = path.normalize(path.resolve(__dirname, 'assets'));
     const tray = new ElectonTray(path.join(images, 'tray.png'));
     tray.setPressedImage(path.join(images, 'tray-pressed.png'));
-
     tray.setToolTip(`Focus - Version ${app.getVersion()}`);
     tray.setContextMenu(Menu.buildFromTemplate([
-      { label: 'Recent Uploads', click: () => { global.application.emit('app:recent'); } },
-      { label: 'Settings', click: () => { global.application.emit('app:settings'); } },
+      { label: 'Recent Uploads', click: () => { this.recent(); } },
+      { label: 'Settings', click: () => { this.settings(); } },
       { type: 'separator' },
-      { label: 'Quit', click: () => { global.application.emit('app:quit'); } }
+      { label: 'Quit', click: () => { this.quit(); } }
     ]));
     return tray;
   }
 
   events() {
-    this.tray.on('double-click', () => {
-      global.application.emit('app:recent');
+    this.tray.on('click', (event, bounds) => {
+      console.log('hello');
+      console.log(...arguments);
+      this.bounds = bounds;
     });
 
-    if (process.platform === 'darwin') {
-      /*
-      this.tray.on('drop-files', (event, files) => {
-
+    if (process.platform === 'win32') {
+      this.tray.on('double-click', () => {
+        this.recent();
       });
-      */
     }
+  }
+
+  recent() {
+    global.application.emit('app:recent');
+  }
+
+  settings() {
+    global.application.emit('app:settings', this.bounds);
+  }
+
+  quit() {
+    global.application.emit('app:quit');
   }
 }

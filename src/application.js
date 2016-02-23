@@ -1,7 +1,9 @@
 const events = require('events');
 const electron = require('electron');
+const path = require('path');
 
 import Tray from './tray';
+import Window from './window';
 
 const {
   EventEmitter
@@ -27,6 +29,7 @@ export default class Application extends EventEmitter {
     this.events();
     this.register();
     this.tray = new Tray();
+    this.window = new Window();
   }
 
   events() {
@@ -36,6 +39,14 @@ export default class Application extends EventEmitter {
     });
 
     // local application events
+    this.on('app:recent', () => {
+      // ...
+    });
+
+    this.on('app:settings', (bounds) => {
+      this.window.updatePosition();
+    });
+
     this.on('app:quit', () => {
       this.quit();
     });
@@ -57,6 +68,14 @@ export default class Application extends EventEmitter {
     if (globalShortcut.isRegistered(shortcut) === false) {
       dialog.showErrorBox('Error', 'There was a problem registering the global shortcuts. The application may not work as expected.');
     }
+  }
+
+  recent() {
+
+  }
+
+  settings() {
+
   }
 
   quit() {
