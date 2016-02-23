@@ -16,6 +16,6 @@ process.on('uncaughtException', (err) => {
 });
 
 app.on('ready', () => {
-  global.application = new Application();
+  new Application();
   console.log('[Startup]', Date.now() - startTime);
 });

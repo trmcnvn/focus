@@ -21,8 +21,8 @@ export default class Window extends EventEmitter {
 
   createWindow() {
     const window = new BrowserWindow({
-      width: 600,
-      height: 400,
+      width: 450,
+      height: 350,
       resizable: false,
       movable: false,
       minimizable: false,
@@ -37,7 +37,17 @@ export default class Window extends EventEmitter {
   }
 
   events() {
-    // ...
+    this.on('window:open', (bounds) => {
+      if (this.window.isVisible() === true) {
+        return this.window.hide();
+      }
+      this.updatePosition(bounds);
+      this.window.show();
+    });
+
+    this.window.on('blur', () => {
+      this.window.hide();
+    });
   }
 
   updatePosition(bounds) {
@@ -49,5 +59,9 @@ export default class Window extends EventEmitter {
       positioner.move('trayCenter', bounds);
     }
     this.window.show();
+  }
+
+  browserWindow() {
+    return this.window;
   }
 }

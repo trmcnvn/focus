@@ -1,13 +1,8 @@
-const events = require('events');
 const electron = require('electron');
 const path = require('path');
 
 import Tray from './tray';
 import Window from './window';
-
-const {
-  EventEmitter
-} = events;
 
 const {
   app,
@@ -17,10 +12,8 @@ const {
   BrowserWindow
 } = electron;
 
-export default class Application extends EventEmitter {
+export default class Application {
   constructor() {
-    super();
-
     // Hide the process from the OS X dock
     if (process.platform === 'darwin') {
       app.dock.hide();
@@ -28,27 +21,14 @@ export default class Application extends EventEmitter {
 
     this.events();
     this.register();
-    this.tray = new Tray();
     this.window = new Window();
+    this.tray = new Tray(this.window);
   }
 
   events() {
     // electron app events
     app.on('will-quit', (event) => {
-      globalShortcut.unregisterAll();
-    });
-
-    // local application events
-    this.on('app:recent', () => {
-      // ...
-    });
-
-    this.on('app:settings', (bounds) => {
-      this.window.updatePosition();
-    });
-
-    this.on('app:quit', () => {
-      this.quit();
+      this.unregister();
     });
 
     // events from the renderer process
@@ -70,15 +50,7 @@ export default class Application extends EventEmitter {
     }
   }
 
-  recent() {
-
-  }
-
-  settings() {
-
-  }
-
-  quit() {
-    app.quit();
+  unregister() {
+    globalShortcut.unregisterAll();
   }
 }
