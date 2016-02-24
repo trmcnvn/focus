@@ -1,9 +1,7 @@
-const electron = window.require('electron');
+const ReactDOM = require('react-dom');
+const React = require('react');
 
-const {
-  ipcRenderer
-} = electron;
-
-window.onload = () => {
-  ipcRenderer.send('from-app', 'window:loaded');
-};
+ReactDOM.render(
+  <h1>Hello</h1>,
+  document.getElementById('content')
+);

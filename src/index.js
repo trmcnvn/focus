@@ -16,6 +16,6 @@ process.on('uncaughtException', (err) => {
 });
 
 app.on('ready', () => {
-  new Application();
+  new Application(); // eslint-disable-line
   console.log('[Startup]', Date.now() - startTime);
 });

@@ -64,4 +64,8 @@ export default class Window extends EventEmitter {
   browserWindow() {
     return this.window;
   }
+
+  webContents() {
+    return this.window.webContents;
+  }
 }

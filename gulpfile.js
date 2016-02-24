@@ -84,7 +84,7 @@ gulp.task('build-client-html-production', (done) => {
 });
 
 gulp.task('build-client-assets', (done) => {
-  glob('./app/assets/**/*', (err, files) => {
+  glob('./app/assets/**/*', { dot: true }, (err, files) => {
     if (err) {
       done(err);
     }
@@ -120,9 +120,26 @@ gulp.task('build-server', (done) => {
   });
 });
 
-gulp.task('build', ['build-client', 'build-server']);
+gulp.task('copy-resources', (done) => {
+  glob('./resources/**/*', (err, files) => {
+    if (err) {
+      done(err);
+    }
 
-gulp.task('build-production', ['build-client-production', 'build-server'], () => {
+    const tasks = files.map((entry) => {
+      return gulp.src(entry)
+        .pipe(rename({
+          dirname: 'resources'
+        }))
+        .pipe(gulp.dest('./build'));
+    });
+    es.merge(tasks).on('end', done);
+  });
+});
+
+gulp.task('build', ['build-client', 'build-server', 'copy-resources']);
+
+gulp.task('build-production', ['build-client-production', 'build-server', 'copy-resources'], () => {
   gulp.src('./package.json')
     .pipe(replace('build/index.js', 'index.js'))
     .pipe(gulp.dest('./build'));
@@ -141,7 +158,13 @@ gulp.task('watch-server', () => {
   });
 });
 
-gulp.task('watch', ['watch-client', 'watch-server']);
+gulp.task('watch-resources', () => {
+  gulp.watch('./resources/**/*', ['copy-resources'], (e) => {
+    console.log('Resource file ' + e.path + ' was ' + e.type + ', rebuilding...');
+  });
+})
+
+gulp.task('watch', ['watch-client', 'watch-server', 'watch-resources']);
 
 /* Linters */
 gulp.task('lint-client', (done) => {
@@ -197,11 +220,4 @@ gulp.task('package-windows', ['build-production'], () => {
     .pipe(zip.dest('./release/windows.zip'));
 });
 
-gulp.task('package-linux', ['build-production'], () => {
-  return gulp.src('./build/**')
-    .pipe(electronPackager({ version: electronVersion, platform: 'linux' }))
-    .pipe(zip.dest('./release/linux.zip'));
-});
-
-gulp.task('package', ['build-production', 'package-windows', 'package-osx',
-  'package-linux']);
+gulp.task('package', ['build-production', 'package-windows', 'package-osx']);

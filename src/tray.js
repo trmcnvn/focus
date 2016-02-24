@@ -3,8 +3,7 @@ const path = require('path');
 
 const {
   app,
-  Tray: ElectonTray,
-  Menu
+  Tray: ElectonTray
 } = electron;
 
 export default class Tray {
@@ -15,7 +14,7 @@ export default class Tray {
   }
 
   createTrayIcon() {
-    const images = path.normalize(path.resolve(__dirname, 'assets'));
+    const images = path.normalize(path.resolve(__dirname, 'resources'));
     const tray = new ElectonTray(path.join(images, 'tray.png'));
     tray.setHighlightMode(false);
     tray.setToolTip(`Focus - Version ${app.getVersion()}`);

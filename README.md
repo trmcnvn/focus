@@ -1,5 +1,16 @@
 # focus
 
+Inspired by [Pussh](https://github.com/teak/Pussh) as an update to my previous Windows-only [Pixel](https://github.com/vevix/Pixel) application.
+
+Built with [Electron](http://electron.atom.io) and [React](https://facebook.github.io/react/).
+
+#### Features
+
+* Global shortcuts to take screenshots.
+  * Control + Shift + 3/4 on Windows
+  * Command + Shift + 3/4 on OS X
+* Supports uploading via imgur and HTTP POST
+
 #### License
 The MIT License (MIT)
 
