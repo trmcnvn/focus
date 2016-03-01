@@ -64,7 +64,6 @@ export default class Application {
     globalShortcut.unregisterAll();
   }
 
-
   randomName() {
     let text = '';
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -103,8 +102,7 @@ export default class Application {
         if (files.length > 0) {
           // we only care about image files (PNG)
           const images = files.filter((file) => {
-            return (cache.indexOf(file) === -1 && /.png$/.test(file))
-              ? true : false;
+            return cache.indexOf(file) === -1 && /.png$/.test(file);
           });
           images.forEach((file) => {
             const filePath = path.join(app.getPath('desktop'), file);

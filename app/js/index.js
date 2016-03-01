@@ -1,7 +1,11 @@
+require('react');
+require('../../node_modules/jquery/dist/jquery');
+require('../../node_modules/bootstrap/dist/js/bootstrap');
+
 const ReactDOM = require('react-dom');
-const React = require('react');
+const Index = require('./components/index');
 
 ReactDOM.render(
-  <h1>Hello</h1>,
+  <Index />,
   document.getElementById('content')
 );
