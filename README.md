@@ -1,35 +1,16 @@
-# focus
+# Focus
+
+Take screenshots on Windows and OS X and upload to imgur.
 
 Inspired by [Pussh](https://github.com/teak/Pussh) as an update to my previous Windows-only [Pixel](https://github.com/vevix/Pixel) application.
 
 Built with [Electron](http://electron.atom.io) and [React](https://facebook.github.io/react/).
 
-#### Features
+#### Usage
 
-* Global shortcuts to take screenshots.
-  * Control + Shift + 3/4 on Windows
-  * Command + Shift + 3/4 on OS X
-* Supports uploading via imgur and HTTP POST
+`Command / Control + Shift + 3` will take a screenshot of your entire screen
+`Command / Control + Shift + 4` will allow you to take a crop-based or window specific screenshot
 
 #### License
-The MIT License (MIT)
-
-Copyright (c) 2016 Thomas McNiven
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Focus is licensed under the MIT license.
+Copyright © 2016, Thomas McNiven

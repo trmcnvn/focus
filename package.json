@@ -1,5 +1,5 @@
 {
-  "name": "focus",
+  "name": "Focus",
   "version": "0.1.0",
   "description": "cross-platform screenshot utility",
   "main": "build/index.js",
