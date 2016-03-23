@@ -120,8 +120,8 @@ gulp.task('build-server', (done) => {
   });
 });
 
-gulp.task('copy-resources', (done) => {
-  glob('./resources/**/*', (err, files) => {
+gulp.task('copy-platform-resources', (done) => {
+  glob(`./resources/${process.platform}/**/*`, (err, files) => {
     if (err) {
       done(err);
     }
@@ -136,6 +136,25 @@ gulp.task('copy-resources', (done) => {
     es.merge(tasks).on('end', done);
   });
 });
+
+gulp.task('copy-global-resources', (done) => {
+  glob('./resources/*', { nodir: true }, (err, files) => {
+    if (err) {
+      done(err);
+    }
+
+    const tasks = files.map((entry) => {
+      return gulp.src(entry)
+        .pipe(rename({
+          dirname: 'resources'
+        }))
+        .pipe(gulp.dest('./build'));
+    });
+    es.merge(tasks).on('end', done);
+  });
+});
+
+gulp.task('copy-resources', ['copy-platform-resources', 'copy-global-resources']);
 
 gulp.task('build', ['build-client', 'build-server', 'copy-resources']);
 
