@@ -13,7 +13,7 @@ const electron = require('electron-connect').server.create();
 const electronPackager = require('gulp-atom-electron');
 const symdest = require('gulp-symdest');
 const zip = require('gulp-vinyl-zip');
-const electronVersion = '0.36.8';
+const electronVersion = '0.37.2';
 
 /* Builing Tasks */
 gulp.task('build-client-bundles', (done) => {
@@ -121,10 +121,11 @@ gulp.task('build-server', (done) => {
 });
 
 gulp.task('copy-platform-resources', (done) => {
-  glob(`./resources/${process.platform}/**/*`, (err, files) => {
+  glob(`./resources/${process.platform}/*`, (err, files) => {
     if (err) {
       done(err);
     }
+    if (files.length === 0) { done(); }
 
     const tasks = files.map((entry) => {
       return gulp.src(entry)
