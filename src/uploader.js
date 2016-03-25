@@ -32,7 +32,18 @@ export default class Uploader extends EventEmitter {
   }
 
   delete(id) {
-    // ...
+    this.emit('uploader:delete-started');
+    this._buildRequest('DELETE', `image/${id}`, null, (err, response) => {
+      if (err) {
+        return this.emit('uploader:delete-failed', err, id);
+      }
+
+      if (response.statusCode !== 200) {
+        return this.emit('uploader:delete-failed', new Error(response.statusMessage), id);
+      }
+
+      this.emit('uploader:delete-complete');
+    });
   }
 
   _buildRequest(method, endpoint, data, cb) {
