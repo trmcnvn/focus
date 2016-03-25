@@ -5,6 +5,7 @@ const childProcess = require('child_process');
 
 import Tray from './tray';
 import Window from './window';
+import Uploader from './uploader';
 
 const {
   app,
@@ -27,6 +28,7 @@ export default class Application {
 
     this.window = new Window();
     this.tray = new Tray(this.window);
+    this.uploader = new Uploader();
 
     this.events();
     this.register();
@@ -76,7 +78,7 @@ export default class Application {
   win32Capture(crop) {
     const exePath = path.normalize(path.resolve(__dirname, 'resources', 'focus-capture.exe'));
     const imageName = `${this.randomName()}.png`;
-    execFile(`${exePath}`, [crop.toString(), imageName], (err) => {
+    execFile(exePath, [crop.toString(), imageName], (err) => {
       if (err) {
         throw err;
       }
@@ -84,7 +86,8 @@ export default class Application {
       // focus-capture stores the image in the temp folder
       const imagePath = path.join(app.getPath('temp'), imageName);
 
-      // todo: upload
+      // Upload the image
+      this.uploader.upload(imagePath);
 
       // delete the file from temp dir.
       fs.unlink(imagePath);
@@ -92,7 +95,8 @@ export default class Application {
   }
 
   darwinCapture() {
-    let cache = [];
+    const cache = [];
+    // Constantly search the desktop for new images taken by the user
     setInterval(() => {
       fs.readdir(app.getPath('desktop'), (err, files) => {
         if (err) {
@@ -100,29 +104,40 @@ export default class Application {
         }
 
         if (files.length > 0) {
-          // we only care about image files (PNG)
+          // filter out any other types of files
+          // we also want to filter out any files we have already checked
           const images = files.filter((file) => {
-            return cache.indexOf(file) === -1 && /.png$/.test(file);
+            return cache.includes(file) === false && /.png$/.test(file);
           });
-          images.forEach((file) => {
-            const filePath = path.join(app.getPath('desktop'), file);
-            const fileStats = fs.statSync(filePath);
+
+          images.forEach((image) => {
+            const imagePath = path.join(app.getPath('desktop'), image);
+            const fileStats = fs.statSync(imagePath);
+
             // Skip files that are old
             if ((Date.now() - fileStats.ctime.getTime()) > 3000) {
               return;
             }
-            exec(`/usr/bin/mdls --raw --name kMDItemIsScreenCapture "${filePath}"`, (err, result) => {
+
+            exec(`/usr/bin/mdls --raw --name kMDItemIsScreenCapture "${imagePath}"`, (err, result) => {
               if (err) {
                 throw err;
               }
-              // not a screenshot
-              if (parseInt(result) === 0) {
-                cache.splice(cache.indexOf(file), 1);
+
+              // add to cache so we don't process it again
+              cache.push(image);
+
+              // not a screenshot, so exit out
+              if (parseInt(result, 10) === 0) {
                 return;
               }
-              // todo: upload
+
+              // upload the image
+              this.uploader.upload(imagePath);
+
+              // delete the file from the desktop (TODO: Settings)
+              fs.unlink(imagePath);
             });
-            cache = files;
           });
         }
       });
