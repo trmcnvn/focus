@@ -9,7 +9,9 @@ import Uploader from './uploader';
 
 const {
   app,
-  globalShortcut
+  globalShortcut,
+  dialog,
+  clipboard
 } = electron;
 
 const {
@@ -38,6 +40,40 @@ export default class Application {
     // electron app events
     app.on('will-quit', (event) => {
       this.unregister();
+    });
+
+    // uploader events
+    this.uploader.on('uploader:upload-started', () => {
+      // TODO: Feedback
+    });
+
+    this.uploader.on('uploader:upload-failed', (err, file) => {
+      // TODO: Retry events
+      const response = dialog.showMessageBox({
+        type: 'error',
+        buttons: ['Retry', 'Cancel'],
+        defaultId: 0,
+        title: 'An error has occurred',
+        message: 'There was an error uploading the image',
+        detail: err.message
+      });
+
+      if (response === 0) { // Retry
+        this.uploader.upload(file);
+      }
+    });
+
+    this.uploader.on('uploader:upload-complete', (json, file) => {
+      // TODO: Base on settings
+      fs.unlink(file);
+
+      // store details on the image
+
+      // TODO: Base on settings
+      // Copy link to clipboard
+      clipboard.writeText(json.data.link);
+
+      // TODO: Notify user of completetion
     });
   }
 
@@ -85,12 +121,7 @@ export default class Application {
 
       // focus-capture stores the image in the temp folder
       const imagePath = path.join(app.getPath('temp'), imageName);
-
-      // Upload the image
       this.uploader.upload(imagePath);
-
-      // delete the file from temp dir.
-      fs.unlink(imagePath);
     });
   }
 
@@ -131,12 +162,7 @@ export default class Application {
               if (parseInt(result, 10) === 0) {
                 return;
               }
-
-              // upload the image
               this.uploader.upload(imagePath);
-
-              // delete the file from the desktop (TODO: Settings)
-              fs.unlink(imagePath);
             });
           });
         }

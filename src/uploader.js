@@ -1,9 +1,14 @@
 const request = require('request');
-const dialog = require('electron').dialog;
 const fs = require('fs');
+const events = require('events');
 
-export default class Uploader {
+const {
+  EventEmitter
+} = events;
+
+export default class Uploader extends EventEmitter {
   constructor() {
+    super();
     this.clientId = '15523f4ea794178';
   }
 
@@ -12,16 +17,22 @@ export default class Uploader {
       image: fs.createReadStream(file)
     };
 
-    // emit events... (Started, Completed, Failed)
-    this._buildRequest('POST', 'upload', data, (err, _, body) => {
+    this.emit('uploader:upload-started');
+    this._buildRequest('POST', 'upload', data, (err, response, body) => {
       if (err) {
-        // todo: retry options
-        dialog.showErrorBox('Failed to upload image', err.message);
+        return this.emit('uploader:upload-failed', err, file);
       }
 
-      // ...
-      console.log(JSON.parse(body).data.link);
+      if (response.statusCode !== 200) {
+        return this.emit('uploader:upload-failed', new Error(response.statusMessage), file);
+      }
+
+      this.emit('uploader:upload-complete', JSON.parse(body), file);
     });
+  }
+
+  delete(id) {
+    // ...
   }
 
   _buildRequest(method, endpoint, data, cb) {
