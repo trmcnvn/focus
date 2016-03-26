@@ -1,9 +1,13 @@
-const React = require('react');
+const TabList = require('./tab-list.js');
+const TabContent = require('./tab-content.js');
 
-module.exports = React.createClass({
+module.exports = window.React.createClass({
   render() {
     return (
-      <h1>Index</h1>
+      <div>
+        <TabList />
+        <TabContent />
+      </div>
     );
   }
 });

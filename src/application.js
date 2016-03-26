@@ -1,8 +1,10 @@
 const electron = require('electron');
 const fs = require('fs');
+const path = require('path');
 
 import Tray from './tray';
 import Window from './window';
+import Settings from './settings';
 import Capture from './capture';
 import Uploader from './uploader';
 
@@ -10,7 +12,8 @@ const {
   app,
   globalShortcut,
   dialog,
-  clipboard
+  clipboard,
+  ipcMain
 } = electron;
 
 export default class Application {
@@ -21,6 +24,7 @@ export default class Application {
     }
 
     this.window = new Window();
+    this.settings = new Settings();
     this.tray = new Tray(this.window);
     this.capture = new Capture();
     this.uploader = new Uploader();
@@ -35,10 +39,20 @@ export default class Application {
       this.unregister();
     });
 
+    // app events
+    ipcMain.on('renderer:loaded', (event) => {
+      event.sender.send('settings', this.settings.getObject());
+      event.sender.send('initialize');
+    });
+
+    ipcMain.on('settings:change', (_, type, key, value) => {
+      this.settings.set(type, key, value);
+      this.settings.save();
+    });
+
     // uploader events
     this.uploader.on('uploader:upload-started', () => {
       // TODO: change tray icon
-      console.log('upload started');
     });
 
     this.uploader.on('uploader:upload-failed', (err, file) => {
@@ -57,17 +71,40 @@ export default class Application {
     });
 
     this.uploader.on('uploader:upload-complete', (json, file) => {
-      // TODO: Base on settings
-      fs.unlink(file);
+      if (this.settings.get('images', 'copy')) {
+        let copyPath = path.join(app.getPath('pictures'), 'Focus');
+        try {
+          fs.mkdirSync(copyPath);
+        } catch (error) {
+          if (error.code !== 'EEXIST') {
+            throw error;
+          }
+        }
 
-      // store details on the image
-      console.log(json.data);
+        copyPath = path.join(copyPath, `${json.data.id}.png`);
+        fs.createReadStream(file).pipe(fs.createWriteStream(copyPath));
+        // delete the source images
+        fs.unlink(file);
+      } else if (this.settings.get('images', 'delete')) {
+        fs.unlink(file);
+      }
 
-      // TODO: Base on settings
-      // Copy link to clipboard
-      clipboard.writeText(json.data.link);
+      if (this.settings.get('general', 'clipboard')) {
+        clipboard.writeText(json.data.link);
+      }
 
-      // TODO: Notify user of completetion
+      // notify the browser process of a completed upload
+      if (this.settings.get('notifications', 'general')) {
+        this.window.webContents().send('notification:general', {
+          title: 'Upload Complete',
+          body: 'Your screenshot has been successfully uploaded to imgur',
+          link: json.data.link
+        });
+      }
+
+      if (this.settings.get('notifications', 'audio')) {
+        this.window.webContents().send('notification:audio');
+      }
     });
 
     this.uploader.on('uploader:delete-started', () => {

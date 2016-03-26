@@ -1,0 +1,14 @@
+{
+  "general": {
+    "clipboard": true,
+    "launch": true
+  },
+  "images": {
+    "delete": false,
+    "copy": true
+  },
+  "notifications": {
+    "general": true,
+    "audio": true
+  }
+}
