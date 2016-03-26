@@ -15,7 +15,12 @@ process.on('uncaughtException', (err) => {
   dialog.showErrorBox('Uh oh. An unexpected error occurred.', err.message);
 });
 
-app.on('ready', () => {
-  new Application(); // eslint-disable-line
-  console.log('[Startup]', Date.now() - startTime);
-});
+const shouldQuit = app.makeSingleInstance(() => { });
+if (shouldQuit) {
+  app.quit();
+} else {
+  app.on('ready', () => {
+    new Application(); // eslint-disable-line
+    console.log('[Startup]', Date.now() - startTime);
+  });
+}
