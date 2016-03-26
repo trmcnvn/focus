@@ -33,6 +33,7 @@ export default class Window extends EventEmitter {
       show: false
     });
     window.loadURL(path.join(`file://${__dirname}/index.html`));
+    window.webContents.openDevTools();
     return window;
   }
 

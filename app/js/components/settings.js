@@ -1,19 +1,15 @@
-const electron = window.require('electron');
-
-const {
-  ipcRenderer
-} = electron;
-
 module.exports = window.React.createClass({
   getInitialState() {
-    return window.Settings;
+    const settings = window.localStorage.getItem('settings');
+    return JSON.parse(settings);
   },
 
   handleChange(type, key, event) {
     const value = window.jQuery(event.target).is(':checked');
-    window.Settings[type][key] = value;
-    this.replaceState(window.Settings);
-    ipcRenderer.send('settings:change', type, key, value);
+    const settings = JSON.parse(window.localStorage.getItem('settings'));
+    settings[type][key] = value;
+    window.localStorage.setItem('settings', JSON.stringify(settings));
+    this.replaceState(settings);
   },
 
   render() {
@@ -31,15 +27,6 @@ module.exports = window.React.createClass({
                   onChange={this.handleChange.bind(this, 'general', 'clipboard')}
                 />
                 Copy links to clipboard
-              </label>
-            </div>
-            <div className='checkbox'>
-              <label>
-                <input type='checkbox'
-                  checked={this.state.general.launch}
-                  onChange={this.handleChange.bind(this, 'general', 'launch')}
-                />
-                Auto-start at launch
               </label>
             </div>
           </div>
