@@ -23,6 +23,15 @@ module.exports = window.React.createClass({
             <div className='checkbox'>
               <label>
                 <input type='checkbox'
+                  checked={this.state.general.launch}
+                  onChange={this.handleChange.bind(this, 'general', 'launch')}
+                />
+                Run Focus at startup
+              </label>
+            </div>
+            <div className='checkbox'>
+              <label>
+                <input type='checkbox'
                   checked={this.state.general.clipboard}
                   onChange={this.handleChange.bind(this, 'general', 'clipboard')}
                 />

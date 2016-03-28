@@ -1,6 +1,7 @@
 const electron = require('electron');
 const fs = require('fs');
 const path = require('path');
+const AutoLaunch = require('auto-launch');
 
 import Window from './window';
 import Tray from './tray';
@@ -34,6 +35,29 @@ export default class Application {
     // electron app events
     app.on('will-quit', (event) => {
       this.unregister();
+    });
+
+    ipcMain.on('settings', (_, settings) => {
+      const launch = new AutoLaunch({
+        name: app.getName()
+      });
+
+      launch.isEnabled((enabled) => {
+        const option = settings.general.launch;
+        if (option && !enabled) {
+          launch.enable((err) => {
+            if (err) {
+              throw err;
+            }
+          });
+        } else if (!option && enabled) {
+          launch.disable((err) => {
+            if (err) {
+              throw err;
+            }
+          });
+        }
+      });
     });
 
     ipcMain.on('image:copy', (_, id, file) => {

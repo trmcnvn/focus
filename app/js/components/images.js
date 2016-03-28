@@ -31,7 +31,7 @@ module.exports = window.React.createClass({
               );
             }
           })()}
-          {this.state.images.map((image) => {
+          {this.state.images.reverse().map((image) => {
             return (
               <button
                 type='button'
