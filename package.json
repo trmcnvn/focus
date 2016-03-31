@@ -40,12 +40,13 @@
     "vinyl-source-stream": "^1.1.0"
   },
   "dependencies": {
+    "auto-launch": "^1.1.1",
     "bootstrap": "^3.3.6",
     "electron-positioner": "^2.0.3",
     "jquery": "^2.2.1",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "request": "^2.69.0",
-    "auto-launch": "^1.1.1"
+    "trash": "^3.4.1"
   }
 }

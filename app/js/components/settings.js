@@ -53,7 +53,7 @@ module.exports = window.React.createClass({
                   checked={this.state.images.delete}
                   onChange={this.handleChange.bind(this, 'images', 'delete')}
                 />
-                Delete after successful upload
+                Move to trash after successful upload
               </label>
             </div>
             <div className='checkbox'>

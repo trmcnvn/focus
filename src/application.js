@@ -2,6 +2,7 @@ const electron = require('electron');
 const fs = require('fs');
 const path = require('path');
 const AutoLaunch = require('auto-launch');
+const trash = require('trash');
 
 import Window from './window';
 import Tray from './tray';
@@ -73,11 +74,11 @@ export default class Application {
       copyPath = path.join(copyPath, `${id}.png`);
       fs.createReadStream(file).pipe(fs.createWriteStream(copyPath));
       // delete the source images
-      fs.unlink(file);
+      trash([file]);
     });
 
     ipcMain.on('image:delete', (_, file) => {
-      fs.unlink(file);
+      trash([file]);
     });
 
     // Uploader
