@@ -77,19 +77,10 @@ module.exports = window.React.createClass({
             <div className='checkbox'>
               <label>
                 <input type='checkbox'
-                  checked={this.state.notifications.general}
-                  onChange={this.handleChange.bind(this, 'notifications', 'general')}
+                  checked={this.state.notifications.enabled}
+                  onChange={this.handleChange.bind(this, 'notifications', 'enabled')}
                 />
                 Enable general notifications
-              </label>
-            </div>
-            <div className='checkbox'>
-              <label>
-                <input type='checkbox'
-                  checked={this.state.notifications.audio}
-                  onChange={this.handleChange.bind(this, 'notifications', 'audio')}
-                />
-                Enable audio notifications
               </label>
             </div>
           </div>

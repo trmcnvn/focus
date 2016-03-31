@@ -81,7 +81,12 @@ export default class Application {
     });
 
     // Uploader
+    this.uploader.on('upload:started', () => {
+      this.tray.emit('icon:upload');
+    });
+
     this.uploader.on('upload:error', (err, file) => {
+      this.tray.emit('icon:reset');
       const response = dialog.showMessageBox({
         type: 'error',
         buttons: ['Retry', 'Cancel'],
@@ -97,6 +102,7 @@ export default class Application {
 
     this.uploader.on('upload:complete', (json, file) => {
       this.window.webContents().send('upload:complete', json, file);
+      this.tray.emit('icon:reset');
     });
   }
 

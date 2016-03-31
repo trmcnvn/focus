@@ -17,8 +17,7 @@ module.exports = () => {
         delete: true
       },
       notifications: {
-        general: true,
-        audio: true
+        enabled: true
       }
     };
     window.localStorage.setItem('settings', JSON.stringify(defaultSettings));

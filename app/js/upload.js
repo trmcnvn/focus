@@ -18,17 +18,13 @@ module.exports = () => {
       clipboard.writeText(json.data.link);
     }
 
-    if (settings.notifications.general) {
+    if (settings.notifications.enabled) {
       const notification = new Notification('Upload Complete', {
         body: 'Your image has been uploaded!'
       });
       notification.onclick = () => {
         clipboard.writeText(json.data.link);
       };
-    }
-
-    if (settings.notifications.audio) {
-      // ...
     }
 
     // push into our storage

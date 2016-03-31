@@ -17,6 +17,7 @@ export default class Uploader extends EventEmitter {
       image: fs.createReadStream(file)
     };
 
+    this.emit('upload:started');
     this._buildRequest('POST', 'image', data, (err, response, body) => {
       if (err) {
         return this.emit('upload:error', err, file);
