@@ -31,7 +31,7 @@ export default class Tray extends EventEmitter {
     let iconName = icon;
     if (iconName === undefined) {
       iconName = 'tray.png';
-      if (process.platform === 'darwin' && app.isDarkMode()) {
+      if ((process.platform === 'darwin' && app.isDarkMode()) || process.platform === 'win32') {
         iconName = 'tray-dark.png';
       }
     }

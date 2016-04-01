@@ -56,7 +56,12 @@ export default class Window extends EventEmitter {
       const position = process.platform === 'win32' ? 'bottomRight' : 'topRight';
       positioner.move(position);
     } else {
-      positioner.move('trayCenter', bounds);
+      if (process.platform === 'win32') {
+        // trayCenter doesn't work on windows
+        positioner.move('bottomRight');
+      } else {
+        positioner.move('trayCenter', bounds);
+      }
     }
     this.window.show();
   }

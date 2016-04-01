@@ -13,7 +13,7 @@ class Emitter extends EventEmitter {}
 window.Events = new Emitter();
 
 module.exports = () => {
-  const settings = window.localStorage.getItem('settings');
+  let settings = window.localStorage.getItem('settings');
   if (settings === null) {
     const defaultSettings = {
       general: {
@@ -29,6 +29,7 @@ module.exports = () => {
       }
     };
     window.localStorage.setItem('settings', JSON.stringify(defaultSettings));
+    settings = defaultSettings;
   }
   ipcRenderer.send('settings', JSON.parse(settings));
 };
