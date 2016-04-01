@@ -13,6 +13,12 @@ module.exports = window.React.createClass({
             Settings
           </a>
         </li>
+
+        <li>
+          <a href='#help' data-toggle='tab'>
+            Help
+          </a>
+        </li>
       </ul>
     );
   }

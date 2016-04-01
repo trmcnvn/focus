@@ -1,5 +1,6 @@
 const Images = require('./images.js');
 const Settings = require('./settings.js');
+const Help = require('./help.js');
 
 module.exports = window.React.createClass({
   render() {
@@ -11,6 +12,10 @@ module.exports = window.React.createClass({
 
         <div className='tab-pane' id='settings'>
           <Settings />
+        </div>
+
+        <div className='tab-pane' id='help'>
+          <Help />
         </div>
       </div>
     );

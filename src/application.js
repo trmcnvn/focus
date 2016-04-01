@@ -89,6 +89,10 @@ export default class Application {
       this.uploader.delete(hash);
     });
 
+    ipcMain.on('app:quit', () => {
+      app.quit();
+    });
+
     // Uploader
     this.uploader.on('uploader-upload:started', () => {
       this.tray.emit('icon:upload');

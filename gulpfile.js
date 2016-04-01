@@ -246,9 +246,8 @@ gulp.task('package-osx', ['build-production'], () => {
     .pipe(electronPackager({
       version: packageJson.electronVersion,
       platform: 'darwin',
-      'app-copyright': '© Thomas McNiven',
-      'app-version': packageJson.version,
-      icon: './resources/darwin/app.icns'
+      copyright: '© Thomas McNiven',
+      darwinIcon: './resources/darwin/app.icns'
     }))
     .pipe(symdest('release'));
 });
@@ -258,9 +257,8 @@ gulp.task('package-windows', ['build-production'], () => {
     .pipe(electronPackager({
       version: packageJson.electronVersion,
       platform: 'win32',
-      'app-copyright': '© Thomas McNiven',
-      'app-version': packageJson.version,
-      icon: './resources/win32/app.ico'
+      copyright: '© Thomas McNiven',
+      winIcon: './resources/win32/app.ico'
     }))
     .pipe(zip.dest('./release/windows.zip'));
 });
