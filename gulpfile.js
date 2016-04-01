@@ -246,8 +246,10 @@ gulp.task('package-osx', ['build-production'], () => {
     .pipe(electronPackager({
       version: packageJson.electronVersion,
       platform: 'darwin',
+      arch: 'x64',
       copyright: '© Thomas McNiven',
-      darwinIcon: './resources/darwin/app.icns'
+      darwinIcon: './resources/darwin/app.icns',
+      darwinBundleIdentifier: 'net.vevix.focus'
     }))
     .pipe(symdest('release'));
 });
@@ -257,6 +259,7 @@ gulp.task('package-windows', ['build-production'], () => {
     .pipe(electronPackager({
       version: packageJson.electronVersion,
       platform: 'win32',
+      arch: 'x64',
       copyright: '© Thomas McNiven',
       winIcon: './resources/win32/app.ico'
     }))
