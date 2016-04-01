@@ -13,7 +13,7 @@ const electron = require('electron-connect').server.create();
 const electronPackager = require('gulp-atom-electron');
 const symdest = require('gulp-symdest');
 const zip = require('gulp-vinyl-zip');
-const electronVersion = '0.37.2';
+const electronVersion = '0.37.3';
 
 /* Builing Tasks */
 gulp.task('build-client-bundles', (done) => {
