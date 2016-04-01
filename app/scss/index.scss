@@ -5,3 +5,16 @@
     padding: 10px;
   }
 }
+
+.image-actions {
+  display: inline-block;
+  float: right;
+
+  button {
+    margin-right: 10px;
+
+    &:last-child {
+      margin-left: 0;
+    }
+  }
+}

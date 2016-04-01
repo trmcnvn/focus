@@ -9,11 +9,11 @@ require('../../node_modules/bootstrap/dist/js/bootstrap');
 const ReactDOM = require('react-dom');
 const Index = require('./components/index');
 
-// Initialize settings
+// Initialize
 require('./init.js')();
 
-// Listen for events
-require('./upload.js')();
+// Listen for uploader events
+require('./uploader.js')();
 
 // Initialize react code
 ReactDOM.render(

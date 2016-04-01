@@ -38,6 +38,7 @@ export default class Application {
       this.unregister();
     });
 
+    // Retrieved settings from renderer, do any tasks we need
     ipcMain.on('settings', (_, settings) => {
       const launch = new AutoLaunch({
         name: app.getName()
@@ -61,6 +62,7 @@ export default class Application {
       });
     });
 
+    // Image is to be moved to app directory
     ipcMain.on('image:copy', (_, id, file) => {
       let copyPath = path.join(app.getPath('pictures'), 'Focus');
       try {
@@ -77,16 +79,22 @@ export default class Application {
       trash([file]);
     });
 
+    // Image is to be moved to trash
     ipcMain.on('image:delete', (_, file) => {
       trash([file]);
     });
 
+    // User is deleting an image
+    ipcMain.on('upload:delete', (_, hash) => {
+      this.uploader.delete(hash);
+    });
+
     // Uploader
-    this.uploader.on('upload:started', () => {
+    this.uploader.on('uploader-upload:started', () => {
       this.tray.emit('icon:upload');
     });
 
-    this.uploader.on('upload:error', (err, file) => {
+    this.uploader.on('uploader-upload:error', (err, file) => {
       this.tray.emit('icon:reset');
       const response = dialog.showMessageBox({
         type: 'error',
@@ -101,9 +109,27 @@ export default class Application {
       }
     });
 
-    this.uploader.on('upload:complete', (json, file) => {
+    this.uploader.on('uploader-upload:complete', (json, file) => {
       this.window.webContents().send('upload:complete', json, file);
       this.tray.emit('icon:reset');
+    });
+
+    this.uploader.on('uploader-delete:error', (err, hash) => {
+      const response = dialog.showMessageBox({
+        type: 'error',
+        buttons: ['Retry', 'Cancel'],
+        title: 'Delete Error',
+        message: 'There was an issue deleting the image',
+        detail: err.message
+      });
+
+      if (response === 0) {
+        this.uploader.delete(hash);
+      }
+    });
+
+    this.uploader.on('uploader-delete:complete', (hash) => {
+      this.window.webContents().send('delete:complete', hash);
     });
   }
 

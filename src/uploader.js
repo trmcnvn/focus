@@ -17,17 +17,31 @@ export default class Uploader extends EventEmitter {
       image: fs.createReadStream(file)
     };
 
-    this.emit('upload:started');
+    this.emit('uploader-upload:started');
     this._buildRequest('POST', 'image', data, (err, response, body) => {
       if (err) {
-        return this.emit('upload:error', err, file);
+        return this.emit('uploader-upload:error', err, file);
       }
 
       if (response.statusCode !== 200) {
-        return this.emit('upload:error', new Error(response.statusMessage), file);
+        return this.emit('uploader-upload:error', new Error(response.statusMessage), file);
       }
 
-      this.emit('upload:complete', JSON.parse(body), file);
+      this.emit('uploader-upload:complete', JSON.parse(body), file);
+    });
+  }
+
+  delete(hash) {
+    this._buildRequest('DELETE', `image/${hash}`, null, (err, response) => {
+      if (err) {
+        return this.emit('uploader-delete:error', err, hash);
+      }
+
+      if (response.statusCode !== 200) {
+        return this.emit('uploader-delete:error', new Error(response.statusMessage), hash);
+      }
+
+      this.emit('uploader-delete:complete', hash);
     });
   }
 

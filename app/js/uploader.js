@@ -35,5 +35,21 @@ module.exports = () => {
       link: json.data.link
     });
     window.localStorage.setItem('images', JSON.stringify(images));
+
+    // Update state
+    window.Events.emit('images:updated');
+  });
+
+  ipcRenderer.on('delete:complete', (_, hash) => {
+    // Remove image from storage array
+    const images = JSON.parse(window.localStorage.getItem('images'));
+    const image = images.find((element) => element.deleteHash === hash);
+    if (image !== undefined) {
+      images.splice(images.indexOf(image), 1);
+      window.localStorage.setItem('images', JSON.stringify(images));
+    }
+
+    // Update state on react component
+    window.Events.emit('images:updated');
   });
 };

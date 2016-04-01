@@ -1,8 +1,16 @@
 const electron = window.require('electron');
+const events = window.require('events');
 
 const {
   ipcRenderer
 } = electron;
+
+const {
+  EventEmitter
+} = events;
+
+class Emitter extends EventEmitter {}
+window.Events = new Emitter();
 
 module.exports = () => {
   const settings = window.localStorage.getItem('settings');
