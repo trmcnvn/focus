@@ -13,7 +13,7 @@ const electron = require('electron-connect').server.create();
 const electronPackager = require('gulp-atom-electron');
 const symdest = require('gulp-symdest');
 const zip = require('gulp-vinyl-zip');
-const electronVersion = '0.37.3';
+const packageJson = require('./package.json');
 
 /* Builing Tasks */
 gulp.task('build-client-bundles', (done) => {
@@ -83,27 +83,10 @@ gulp.task('build-client-html-production', (done) => {
   });
 });
 
-gulp.task('build-client-assets', (done) => {
-  glob('./app/assets/**/*', { dot: true }, (err, files) => {
-    if (err) {
-      done(err);
-    }
-
-    const tasks = files.map((entry) => {
-      return gulp.src(entry)
-        .pipe(rename({
-          dirname: 'assets'
-        }))
-        .pipe(gulp.dest('./build'));
-    });
-    es.merge(tasks).on('end', done);
-  });
-});
-
 gulp.task('build-client', ['build-client-bundles', 'build-client-scss',
-  'build-client-html', 'build-client-assets']);
+  'build-client-html']);
 gulp.task('build-client-production', ['build-client-bundles', 'build-client-scss',
-  'build-client-html-production', 'build-client-assets']);
+  'build-client-html-production']);
 
 gulp.task('build-server', (done) => {
   glob('./src/*.js', (err, files) => {
@@ -155,15 +138,45 @@ gulp.task('copy-global-resources', (done) => {
   });
 });
 
-gulp.task('copy-resources', ['copy-platform-resources', 'copy-global-resources']);
+gulp.task('copy-node-modules', (done) => {
+  glob('./node_modules/**/*', (err, files) => {
+    if (err) {
+      done(err);
+    }
+
+    // not all packages are needed, some are already included by browserify
+    const packages = [
+      'auto-launch',
+      'electron-positioner',
+      'request',
+      'trash'
+    ];
+
+    files = files.filter((entry) => {
+      const packageName = entry.match(/\.\/node_modules\/(\S+?(?=\/|$))/);
+      return packageName && packages.indexOf(packageName[1]) !== -1;
+    });
+
+    const tasks = files.map((entry) => {
+      return gulp.src(entry, { base: '.' })
+        .pipe(gulp.dest('./build'));
+    });
+    es.merge(tasks).on('end', done);
+  });
+});
+
+gulp.task('copy-resources', ['copy-platform-resources', 'copy-global-resources', 'copy-node-modules']);
 
 gulp.task('build', ['build-client', 'build-server', 'copy-resources']);
 
-gulp.task('build-production', ['build-client-production', 'build-server', 'copy-resources'], () => {
-  gulp.src('./package.json')
-    .pipe(replace('build/index.js', 'index.js'))
-    .pipe(gulp.dest('./build'));
-});
+gulp.task('build-production', ['build-client-production', 'build-server',
+  'copy-resources'],
+  () => {
+    gulp.src('./package.json')
+      .pipe(replace('build/index.js', 'index.js'))
+      .pipe(gulp.dest('./build'));
+  }
+);
 
 /* Watchers */
 gulp.task('watch-client', () => {
@@ -230,13 +243,25 @@ gulp.task('serve', ['build', 'watch'], () => {
 /* Release */
 gulp.task('package-osx', ['build-production'], () => {
   return gulp.src('./build/**')
-    .pipe(electronPackager({ version: electronVersion, platform: 'darwin' }))
+    .pipe(electronPackager({
+      version: packageJson.electronVersion,
+      platform: 'darwin',
+      'app-copyright': '© Thomas McNiven',
+      'app-version': packageJson.version,
+      icon: './resources/darwin/app.icns'
+    }))
     .pipe(symdest('release'));
 });
 
 gulp.task('package-windows', ['build-production'], () => {
   return gulp.src('./build/**')
-    .pipe(electronPackager({ version: electronVersion, platform: 'win32' }))
+    .pipe(electronPackager({
+      version: packageJson.electronVersion,
+      platform: 'win32',
+      'app-copyright': '© Thomas McNiven',
+      'app-version': packageJson.version,
+      icon: './resources/win32/app.ico'
+    }))
     .pipe(zip.dest('./release/windows.zip'));
 });
 

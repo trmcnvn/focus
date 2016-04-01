@@ -1,6 +1,7 @@
 {
   "name": "Focus",
   "version": "0.1.0",
+  "electronVersion": "0.37.3",
   "description": "cross-platform screenshot utility",
   "main": "build/index.js",
   "repository": {
