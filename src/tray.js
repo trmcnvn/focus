@@ -4,6 +4,7 @@ const events = require('events');
 
 const {
   app,
+  systemPreferences,
   Tray: ElectonTray
 } = electron;
 
@@ -22,7 +23,7 @@ export default class Tray extends EventEmitter {
   createTrayIcon() {
     const icon = this.getIconPath();
     const tray = new ElectonTray(icon);
-    tray.setHighlightMode(false);
+    tray.setHighlightMode('never');
     tray.setToolTip(`Focus - Version ${app.getVersion()}`);
     return tray;
   }
@@ -31,10 +32,11 @@ export default class Tray extends EventEmitter {
     let iconName = icon;
     if (iconName === undefined) {
       iconName = 'tray.png';
-      if ((process.platform === 'darwin' && app.isDarkMode()) || process.platform === 'win32') {
+      if ((process.platform === 'darwin' && systemPreferences.isDarkMode()) || process.platform === 'win32') {
         iconName = 'tray-dark.png';
       }
     }
+
     const images = path.normalize(path.resolve(__dirname, 'resources'));
     return path.join(images, iconName);
   }
